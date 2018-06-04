@@ -1,0 +1,32 @@
+i{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jest": true
+  },
+
+  "plugins": [
+    "react"
+  ],
+
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ],
+
+  "rules": {
+    "indent": [
+      "error", 2, {"SwitchCase": 1}
+    ],
+
+    "react/prop-types": 0
+  }
+}
