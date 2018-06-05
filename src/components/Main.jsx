@@ -4,63 +4,24 @@ import Map from './Map';
 import './Main.css';
 
 export default class Main extends Component {
-
   state = {
-    bestResult: null,
+    place: null,
     map: null
-    //best: null,
-    //otherrs: null,
-    //map: null
   }
 
-  //onClick = () => {
-    //this.setState({
-      //lat: 40.730610,
-      //lng: -73.935242
-    //}, () => {
-      //const { map, lat, lng } = this.state;
-      //map.setCenter(new google.maps.LatLng(lat, lng));
-    //});
-  //}
-
-  //_renderMap() {
-    //const { lat, lng } = this.state;
-
-    //const map = new google.maps.Map(this.refs.map, {
-      //zoom: 8,
-      //center: {
-        //lat,
-        //lng
-      //}
-    //});
-
-    //this.setState({
-      //map
-    //});
-
-    //new google.maps.places.PlacesService(map).nearbySearch({
-      //location: {
-        //lat,
-        //lng
-      //},
-      //radius: '50000',
-      //keyword: 'hamburger'
-    //}, (results, status) => {
-      //console.log('status', status); 
-      //console.log('results', results);
-    //});
-  //}
+  placesService = new google.maps.places.PlacesService(document.createElement('div'))
 
   _findTheBest = (results, status) => {
     if (status !== google.maps.places.PlacesServiceStatus.OK) { return; }
 
-    const bestResult = results.reduce((prev, current) => (prev.rating > current.rating) ? prev : current);
-    const { lat, lng } = bestResult.geometry.location;
-    const map = <Map lat={lat()} lng={lng()} />
-    
-    this.setState({
-      bestResult,
-      map
+    const result = results.reduce((prev, current) => (prev.rating > current.rating) ? prev : current);
+    const map = <Map place={result}  />;
+
+    this.placesService.getDetails({
+      placeId: result.place_id
+    }, (place) => {
+      console.log(place);
+      this.setState({ place, map });
     });
   }
 
@@ -78,32 +39,35 @@ export default class Main extends Component {
       keyword: 'hamburger'
     };
 
-    const service = new google.maps.places.PlacesService(document.createElement('div'));
-    service.nearbySearch(request, this._findTheBest);
+    this.placesService.nearbySearch(request, this._findTheBest);
   }
 
   componentDidMount() {
     navigator.geolocation.getCurrentPosition(this._searchByPlaces);
-    //navigator.geolocation.getCurrentPosition((position) => {
-      //const { latitude, longitude } = position.coords;
-      //const map = <Map lat={latitude} lng={longitude} />
-
-      //this.setState({
-        //lat: latitude,
-        //lng: longitude,
-        //map
-      //}); 
-    //});
-  }
-
-  _renderMap() {
-    return this.state.map; 
   }
 
   render() {
+    const { place, map } = this.state;
+    const result = place || {};
+
     return (
       <div>
-        { this._renderMap() }
+        <h1>{result.name}</h1>
+        <h2>{result.rating}</h2>
+
+        <ul>
+          <li><strong>Address: </strong>{result.formatted_address}</li>
+          <li>
+            <strong>Website: </strong>
+            <a href={result.website} target="_blank">{result.website}</a>
+          </li>
+          <li>
+            <strong>Phone: </strong>
+            {result.formatted_phone_number}
+          </li>
+        </ul>
+
+        {map}
       </div>
     )
   }
