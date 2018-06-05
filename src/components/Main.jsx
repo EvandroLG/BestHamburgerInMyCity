@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Map from './Map';
+import Photos from './Photos';
 
 import './Main.css';
 
@@ -68,6 +69,8 @@ export default class Main extends Component {
         </ul>
 
         {map}
+
+        <Photos photos={result.photos} />
       </div>
     )
   }
