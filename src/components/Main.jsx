@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Search from './Search';
 import Map from './Map';
 import Photos from './Photos';
 
 import './Main.css';
 
-export default class Main extends Component {
+class Main extends Component {
   state = {
     place: null,
     map: null
@@ -22,13 +23,12 @@ export default class Main extends Component {
     this.placesService.getDetails({
       placeId: result.place_id
     }, (place) => {
-      console.log(place);
       this.setState({ place, map });
     });
   }
 
-  _searchByPlaces = (position) => {
-    const { latitude, longitude } = position.coords;
+  _searchByPlaces = () => {
+    const { latitude, longitude } = this.props.currentPosition;
 
     const request = {
       location: {
@@ -45,7 +45,7 @@ export default class Main extends Component {
   }
 
   componentDidMount() {
-    navigator.geolocation.getCurrentPosition(this._searchByPlaces);
+    this.props.getCurrentPosition(this._searchByPlaces);
   }
 
   render() {
@@ -78,3 +78,31 @@ export default class Main extends Component {
     )
   }
 }
+
+const mapStateToProps = ({ currentPosition }) => {
+  return {
+    currentPosition
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getCurrentPosition: (callback) => {
+      navigator.geolocation.getCurrentPosition(data => {
+        const { latitude, longitude } = data.coords;
+        const position = {
+          latitude, longitude
+        };
+
+        dispatch({
+          type: 'UPDATE_CURRENT_POSITION',
+          position
+        });
+
+        callback();
+      });
+    }
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);
