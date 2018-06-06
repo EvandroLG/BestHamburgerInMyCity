@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Search from './Search';
 import Map from './Map';
 import Photos from './Photos';
 
@@ -53,6 +54,8 @@ export default class Main extends Component {
 
     return (
       <div>
+        <Search />
+
         <h1>{result.name}</h1>
         <h2>{result.rating}</h2>
 
