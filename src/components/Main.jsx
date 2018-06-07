@@ -54,7 +54,7 @@ class Main extends Component {
 
     return (
       <div>
-        <Search />
+        <Search currentPosition={this.props.currentPosition} />
 
         <h1>{result.name}</h1>
         <h2>{result.rating}</h2>
