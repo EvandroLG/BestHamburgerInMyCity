@@ -6,7 +6,11 @@ export default class Search extends Component {
     address: ''
   }
 
-  shouldComponentUpdate(nextProps) {
+  shouldComponentUpdate(nextProps, nextState) {
+    if (!Object.is(nextState, this.state)) {
+      return true;
+    }
+
     if (Object.is(nextProps.currentPosition, this.props.currentPosition)) {
       return false;
     }
