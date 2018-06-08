@@ -1,19 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-function debounce(callback, wait, context = this) {
-  let timeout = null;
-  let callbackArgs = null;
-
-  const later = () => callback.apply(context, callbackArgs);
-
-  return function() {
-    callbackArgs = arguments;
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
-
 class Search extends Component {
   state = {
     address: '',
@@ -50,9 +37,11 @@ class Search extends Component {
     return true;
   }
 
-  _updateGeoPosition = address => {
+  _onSubmit = e => {
+    e.preventDefault();
+
     this.geocode({
-      address
+      address: this.state.address
     }, (data) => {
       if (!data) { return; }
 
@@ -72,22 +61,22 @@ class Search extends Component {
   }
 
   _onChange = e => {
-    const address = e.target.value;
-
     this.setState({
-      address: address
+      address: e.target.value
     });
-
-    debounce(() => this._updateGeoPosition(address), 2000)();
   }
 
   render() {
     return (
-      <input
-        placeholder="Search for..." 
-        value={this.state.address}
-        onChange={this._onChange}
-      />
+      <form onSubmit={this._onSubmit}>
+        <input
+          placeholder="Search for..." 
+          value={this.state.address}
+          onChange={this._onChange}
+        />
+
+        <input type="submit" value="Ok!" />
+      </form> 
     )
   }
 }

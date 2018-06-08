@@ -44,6 +44,12 @@ class Main extends Component {
     this.placesService.nearbySearch(request, this._findTheBest);
   }
 
+  componentDidUpdate(prev) {
+    if (prev.currentPosition.latitude && !Object.is(prev.currentPosition, this.props.currentPosition)) {
+      this._searchByPlaces();
+    }
+  }
+
   componentDidMount() {
     this.props.getCurrentPosition(this._searchByPlaces);
   }
@@ -85,7 +91,7 @@ const mapStateToProps = ({ currentPosition }) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
     getCurrentPosition: (callback) => {
       navigator.geolocation.getCurrentPosition(data => {
