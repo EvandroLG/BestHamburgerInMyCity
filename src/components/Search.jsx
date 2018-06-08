@@ -50,33 +50,35 @@ class Search extends Component {
     return true;
   }
 
-  onChange = e => {
+  _updateGeoPosition = address => {
+    this.geocode({
+      address
+    }, (data) => {
+      if (!data) { return; }
+
+      const { lat, lng } = data[0].geometry.location;
+
+      const currentPosition = {
+        latitude: lat(),
+        longitude: lng()
+      };
+
+      this.setState({
+        currentPosition
+      }, () => {
+        this.props.updateCurrentPosition(currentPosition);
+      });
+    });
+  }
+
+  _onChange = e => {
     const address = e.target.value;
 
     this.setState({
       address: address
     });
 
-    debounce(() => {
-      this.geocode({
-        address
-      }, (data) => {
-        if (!data) { return; }
-
-        const { lat, lng } = data[0].geometry.location;
-
-        const currentPosition = {
-          latitude: lat(),
-          longitude: lng()
-        };
-
-        this.setState({
-          currentPosition
-        }, () => {
-          this.props.updateCurrentPosition(currentPosition);
-        });
-      });
-    }, 5000)();
+    debounce(() => this._updateGeoPosition(address), 2000)();
   }
 
   render() {
@@ -84,7 +86,7 @@ class Search extends Component {
       <input
         placeholder="Search for..." 
         value={this.state.address}
-        onChange={this.onChange}
+        onChange={this._onChange}
       />
     )
   }
